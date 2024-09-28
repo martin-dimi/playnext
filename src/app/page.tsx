@@ -87,8 +87,8 @@ const SteamProfilePage = async () => {
 
       <div className="flex flex-col gap-4">
         {games
-          // sort usign name
-          .sort((a, b) => a.name.localeCompare(b.name))
+          // sort usign playtime
+          .sort((a, b) => b.playtime_forever - a.playtime_forever)
           .map((game) => (
             <Game key={game.appid} game={game} />
           ))}
@@ -98,6 +98,8 @@ const SteamProfilePage = async () => {
 };
 
 const Game = ({ game }: { game: SteamGame }) => {
+  const timePlayedReadable = readableTime(game.playtime_forever);
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
@@ -116,12 +118,24 @@ const Game = ({ game }: { game: SteamGame }) => {
           <strong>App id</strong>: {game.appid}
         </h1>
         <h1>
-          <strong>Playtime</strong>: {game.playtime_forever}
+          <strong>Playtime</strong>: {readableTime(game.playtime_forever)}
         </h1>
         <h1>
-          <strong>Last played</strong>: {game.rtime_last_played}
+          <strong>Last played</strong>: {reableUnixTime(game.rtime_last_played)}
         </h1>
       </CardContent>
     </Card>
   );
 };
+
+//  Converts it to XhYm
+function readableTime(durationInMinutes: number): string {
+  const hours = Math.floor(durationInMinutes / 60);
+  const minutes = Math.floor(durationInMinutes % 60);
+  return `${hours} hours ${minutes} mins`;
+}
+
+function reableUnixTime(unixTime: number): string {
+  const date = new Date(unixTime * 1000);
+  return date.toLocaleString();
+}
