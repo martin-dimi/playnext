@@ -4,7 +4,6 @@ import { SteamLoginButton } from "play/components/providers/steam/steamLoginButt
 import { HydrateClient } from "play/trpc/server";
 import { createClient } from "play/utils/supabase/server";
 import type { SteamGame, SteamProfile } from "./auth/steam/route";
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -72,9 +71,7 @@ const SteamProfilePage = async () => {
       <LogoutButton />
       <div className="px-4 lg:px-0">
         <Card className="flex justify-start gap-4 px-4 py-4 dark:bg-neutral-800">
-          <Image
-            width={500}
-            height={500}
+          <img
             src={profile.avatar}
             alt="avatar"
             className="h-20 w-20 rounded-lg"
@@ -111,11 +108,9 @@ const Game = ({ game }: { game: SteamGame }) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
-        <Image
+        <img
           src={`http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
           alt="game"
-          width={100}
-          height={100}
           className="h-8 w-8 rounded-lg"
         />
         <h1 className="text-lg">{game.name}</h1>
