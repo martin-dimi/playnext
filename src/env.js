@@ -31,8 +31,9 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_STEAM_API_KEY: process.env.NEXT_PUBLIC_STEAM_API_KEY,
-    NEXT_PUBLIC_DOMAIN:
-      process.env.VERCEL_URL || process.env.NEXT_PUBLIC_DOMAIN,
+    NEXT_PUBLIC_DOMAIN: process.env.VERCEL_URL
+      ? "https://" + process.env.VERCEL_URL
+      : process.env.NEXT_PUBLIC_DOMAIN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
