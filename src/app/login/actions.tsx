@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { env } from "play/env";
 
 import { createClient } from "play/utils/supabase/server";
 
@@ -13,7 +14,7 @@ export async function loginWithEmail(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: "/",
+      emailRedirectTo: env.NEXT_PUBLIC_DOMAIN + "/",
       shouldCreateUser: true,
     },
   });
