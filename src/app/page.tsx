@@ -48,7 +48,7 @@ const SteamProfilePage = async () => {
           <CardDescription>
             To get your steam profile and games, you need to connect your steam
             account. Your steam account needs to be public. Otherwise this
-            doesn't work.
+            doesn&apos;t work.
           </CardDescription>
         </CardHeader>
 
