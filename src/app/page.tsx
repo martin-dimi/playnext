@@ -112,6 +112,7 @@ const Game = ({ game }: { game: SteamGame }) => {
           src={`http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
           alt="game"
           className="h-8 w-8 rounded-lg"
+          loading="lazy"
         />
         <h1 className="text-lg">{game.name}</h1>
       </CardHeader>
