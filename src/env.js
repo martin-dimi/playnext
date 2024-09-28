@@ -32,7 +32,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_STEAM_API_KEY: process.env.NEXT_PUBLIC_STEAM_API_KEY,
     NEXT_PUBLIC_DOMAIN: process.env.VERCEL_URL
-      ? "https://" + process.env.VERCEL_URL
+      ? "https://" + process.env.VERCEL_PROJECT_PRODUCTION_URL
       : process.env.NEXT_PUBLIC_DOMAIN,
   },
   /**
