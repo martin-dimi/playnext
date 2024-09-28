@@ -18,7 +18,7 @@ export function LogoutButton() {
   };
 
   return (
-    <Button variant="secondary" onClick={signout}>
+    <Button className="mx-4 lg:mx-0" variant="outline" onClick={signout}>
       Logout
     </Button>
   );

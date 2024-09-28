@@ -70,22 +70,30 @@ const SteamProfilePage = async () => {
   return (
     <div className="mt-10 flex flex-col gap-10">
       <LogoutButton />
-      <Card className="flex justify-start gap-4 p-4">
-        <Image
-          width={500}
-          height={500}
-          src={profile.avatar}
-          alt="avatar"
-          className="h-20 w-20 rounded-lg"
-        />
-        <div className="flex flex-col gap-1">
-          <h1>Name: {profile.personaname}</h1>
-          <h1>Id: {profile.userid}</h1>
-          <h1>Games: {games.length}</h1>
-        </div>
-      </Card>
+      <div className="px-4 lg:px-0">
+        <Card className="flex justify-start gap-4 px-4 py-4 dark:bg-neutral-800">
+          <Image
+            width={500}
+            height={500}
+            src={profile.avatar}
+            alt="avatar"
+            className="h-20 w-20 rounded-lg"
+          />
+          <div className="flex flex-col gap-1">
+            <h1>
+              <strong>Name:</strong> {profile.personaname}
+            </h1>
+            <h1>
+              <strong>Id:</strong> {profile.userid}
+            </h1>
+            <h1>
+              <strong>Games:</strong> {games.length}
+            </h1>
+          </div>
+        </Card>
+      </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 px-4 lg:px-0">
         {games
           // sort usign playtime
           .sort((a, b) => b.playtime_forever - a.playtime_forever)
