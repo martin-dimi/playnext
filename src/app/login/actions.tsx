@@ -24,6 +24,6 @@ export async function loginWithEmail(formData: FormData) {
   }
 
   console.log("Success. User logged in");
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/login", "layout");
+  redirect("/login?type=check-email");
 }
