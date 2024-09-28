@@ -1,0 +1,44 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+"use server";
+
+import { redirect, RedirectType } from "next/navigation";
+
+import openid, { type OpenIdError, RelyingParty } from "openid";
+
+const relyingParty = new openid.RelyingParty(
+  "http://localhost:3000/auth/steam",
+  "http://localhost:3000",
+  true,
+  false,
+  [],
+);
+
+export async function steamLogin() {
+  const urlPromise = new Promise<string>((resolve, reject) => {
+    relyingParty.authenticate(
+      "https://steamcommunity.com/openid",
+      false,
+      (err: OpenIdError | null, authUrl: string | null) => {
+        if (err || !authUrl) {
+          reject(new Error("Failed to get auth url:" + err?.message));
+          return;
+        }
+
+        resolve(authUrl);
+      },
+    );
+  });
+
+  let redirectUrl = "";
+  try {
+    redirectUrl = await urlPromise;
+  } catch (error) {
+    console.error(error);
+    redirect("/error");
+  }
+
+  redirect(redirectUrl, RedirectType.push);
+}

@@ -28,6 +28,7 @@
     "paths": {
       "play/*": ["./src/*"],
       "@/*": ["./*"],
+      "@ui/*": ["./src/components/ui/*"],
     }
   },
   "include": [

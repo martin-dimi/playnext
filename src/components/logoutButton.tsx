@@ -17,5 +17,9 @@ export function LogoutButton() {
     }
   };
 
-  return <Button onClick={signout}>Logout</Button>;
+  return (
+    <Button variant="secondary" onClick={signout}>
+      Logout
+    </Button>
+  );
 }
