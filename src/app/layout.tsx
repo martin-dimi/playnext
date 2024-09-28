@@ -17,10 +17,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <h1 className="absolute right-10 top-10 text-white">
-          This is the default background!
-        </h1>
-
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
