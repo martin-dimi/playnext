@@ -7,10 +7,11 @@
 import { redirect, RedirectType } from "next/navigation";
 
 import openid, { type OpenIdError, RelyingParty } from "openid";
+import { env } from "play/env";
 
 const relyingParty = new openid.RelyingParty(
-  "http://localhost:3000/auth/steam",
-  "http://localhost:3000",
+  env.NEXT_PUBLIC_DOMAIN + "/auth/steam",
+  env.NEXT_PUBLIC_DOMAIN,
   true,
   false,
   [],

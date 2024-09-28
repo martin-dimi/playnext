@@ -8,8 +8,8 @@ import { env } from "play/env";
 import { createClient } from "play/utils/supabase/server";
 
 const relyingParty = new openid.RelyingParty(
-  "http://localhost:3000/auth/steam",
-  "http://localhost:3000",
+  env.NEXT_PUBLIC_DOMAIN + "/auth/steam",
+  env.NEXT_PUBLIC_DOMAIN,
   true,
   false,
   [],
