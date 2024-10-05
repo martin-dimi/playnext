@@ -1,145 +1,27 @@
-import { redirect } from "next/navigation";
-import { LogoutButton } from "play/components/logoutButton";
-import { SteamLoginButton } from "play/components/providers/steam/steamLoginButton";
-import { HydrateClient } from "play/trpc/server";
-import { createClient } from "play/utils/supabase/server";
-import type { SteamGame, SteamProfile } from "./auth/steam/route";
+import { SteamProfilePage } from "./steam";
+import { PsnProfilePage } from "./psn";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "play/components/ui/card";
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "play/components/ui/tabs";
 
 export default async function Home() {
   return (
-    <HydrateClient>
-      <main className="dark flex min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
-        <SteamProfilePage />
-      </main>
-    </HydrateClient>
+    <main className="dark flex min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
+      <Tabs defaultValue="steam" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="steam">Steam</TabsTrigger>
+          <TabsTrigger value="psn">PSN</TabsTrigger>
+        </TabsList>
+        <TabsContent value="steam">
+          <SteamProfilePage />
+        </TabsContent>
+        <TabsContent value="psn">
+          <PsnProfilePage />
+        </TabsContent>
+      </Tabs>
+    </main>
   );
-}
-
-const SteamProfilePage = async () => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/error");
-  }
-
-  const res = await supabase
-    .from("steam_profiles")
-    .select("*")
-    .eq("userid", user?.id)
-    .single();
-
-  if (!res.data) {
-    return (
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle>Connect to your steam account</CardTitle>
-          <CardDescription>
-            To get your steam profile and games, you need to connect your steam
-            account. Your steam account needs to be public. Otherwise this
-            doesn&apos;t work.
-          </CardDescription>
-        </CardHeader>
-
-        <CardFooter>
-          <SteamLoginButton />
-        </CardFooter>
-      </Card>
-    );
-  }
-
-  const gameRes = await supabase
-    .from("steam_games")
-    .select("*")
-    .eq("userid", user?.id);
-
-  const profile: SteamProfile = res.data as SteamProfile;
-  const games = gameRes.data as SteamGame[];
-
-  return (
-    <div className="mt-10 flex flex-col gap-10">
-      <LogoutButton />
-      <div className="px-4 lg:px-0">
-        <Card className="flex justify-start gap-4 px-4 py-4 dark:bg-neutral-800">
-          <img
-            src={profile.avatar}
-            alt="avatar"
-            className="h-20 w-20 rounded-lg"
-          />
-          <div className="flex flex-col gap-1">
-            <h1>
-              <strong>Name:</strong> {profile.personaname}
-            </h1>
-            <h1>
-              <strong>Id:</strong> {profile.userid}
-            </h1>
-            <h1>
-              <strong>Games:</strong> {games.length}
-            </h1>
-          </div>
-        </Card>
-      </div>
-
-      <div className="flex flex-col gap-4 px-4 lg:px-0">
-        {games
-          // sort usign playtime
-          .sort((a, b) => b.playtime_forever - a.playtime_forever)
-          .map((game) => (
-            <Game key={game.appid} game={game} />
-          ))}
-      </div>
-    </div>
-  );
-};
-
-const Game = ({ game }: { game: SteamGame }) => {
-  const timePlayedReadable = readableTime(game.playtime_forever);
-
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center gap-4">
-        <img
-          src={`http://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
-          alt="game"
-          className="h-8 w-8 rounded-lg"
-          loading="lazy"
-        />
-        <h1 className="text-lg">{game.name}</h1>
-      </CardHeader>
-
-      <CardContent className="flex flex-col gap-1">
-        <h1>
-          <strong>App id</strong>: {game.appid}
-        </h1>
-        <h1>
-          <strong>Playtime</strong>: {readableTime(game.playtime_forever)}
-        </h1>
-        <h1>
-          <strong>Last played</strong>: {reableUnixTime(game.rtime_last_played)}
-        </h1>
-      </CardContent>
-    </Card>
-  );
-};
-
-//  Converts it to XhYm
-function readableTime(durationInMinutes: number): string {
-  const hours = Math.floor(durationInMinutes / 60);
-  const minutes = Math.floor(durationInMinutes % 60);
-  return `${hours} hours ${minutes} mins`;
-}
-
-function reableUnixTime(unixTime: number): string {
-  const date = new Date(unixTime * 1000);
-  return date.toLocaleString();
 }

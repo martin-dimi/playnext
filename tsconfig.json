@@ -26,8 +26,8 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "play/*": ["./src/*"],
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
+      "@type/*": ["./src/types/*"],
       "@ui/*": ["./src/components/ui/*"],
     }
   },

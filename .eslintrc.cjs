@@ -15,6 +15,7 @@ const config = {
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {

@@ -1,19 +1,11 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+import { env } from "@/env";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { type NextRequest } from "next/server";
 
-import openid from "openid";
-import { env } from "play/env";
-import { createClient } from "play/utils/supabase/server";
-
-const relyingParty = new openid.RelyingParty(
-  env.NEXT_PUBLIC_DOMAIN + "/auth/steam",
-  env.NEXT_PUBLIC_DOMAIN,
-  true,
-  false,
-  [],
-);
+import { createClient } from "@/utils/supabase/server";
+import { resolveSteamId } from "./auth";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -27,27 +19,8 @@ export async function GET(request: NextRequest) {
     redirect("/error");
   }
 
-  const verification = new Promise<string>((resolve, reject) => {
-    relyingParty.verifyAssertion(request, (error, result) => {
-      if (error) {
-        reject(new Error("Failed to verify assertion:" + error?.message));
-        return;
-      }
-
-      console.log("Got steam auth request", result);
-      const chunks = result?.claimedIdentifier?.split("/") ?? [];
-      if (result?.authenticated !== true || chunks.length === 0) {
-        reject(new Error("Failed to verify assertion"));
-        return;
-      }
-
-      const steamId = chunks.pop() ?? "";
-      resolve(steamId);
-    });
-  });
-
   try {
-    const identifier = await verification;
+    const identifier = await resolveSteamId(request);
     await processSteamLogin(supabase, user.id, identifier);
   } catch (error) {
     console.error(error);
@@ -76,11 +49,6 @@ async function processSteamLogin(
 
   return;
 }
-
-// https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002?steamids=76561198042650870&key=1A126B166408562C7A9189E91A6DC255
-// NEXT_PUBLIC_STEAM_API_KEY=1A126B166408562C7A9189E91A6DC255
-
-//  https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=1A126B166408562C7A9189E91A6DC255&steamid=76561198042650870&include_appinfo=true
 
 const getGames = async (
   supabase: SupabaseClient,
