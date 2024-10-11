@@ -6,8 +6,8 @@
 
 import { redirect, RedirectType } from "next/navigation";
 
-import openid, { type OpenIdError, RelyingParty } from "openid";
-import { env } from "play/env";
+import { env } from "@/env";
+import openid, { type OpenIdError } from "openid";
 
 const relyingParty = new openid.RelyingParty(
   env.NEXT_PUBLIC_DOMAIN + "/auth/steam",

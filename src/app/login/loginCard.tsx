@@ -1,17 +1,17 @@
 "use client";
 
-import { Label } from "@radix-ui/react-label";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "play/components/ui/card";
-import { Input } from "play/components/ui/input";
+} from "@/components/ui/card";
+import { FormButton } from "@/components/ui/formButton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
 import { loginWithEmail } from "./actions";
-import { FormButton } from "play/components/ui/formButton";
 
 export const LoginCard = () => {
   return (

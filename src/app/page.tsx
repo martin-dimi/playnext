@@ -5,7 +5,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "play/components/ui/tabs";
+} from "@/components/ui/tabs";
 
 export default async function Home() {
   return (

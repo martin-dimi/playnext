@@ -1,16 +1,16 @@
-import { redirect } from "next/navigation";
-import { LogoutButton } from "play/components/logoutButton";
-import { SteamLoginButton } from "play/components/providers/steam/steamLoginButton";
+import { LogoutButton } from "@/components/logoutButton";
+import { SteamLoginButton } from "@/components/providers/steam/steamLoginButton";
 import {
   Card,
-  CardHeader,
-  CardTitle,
+  CardContent,
   CardDescription,
   CardFooter,
-  CardContent,
-} from "play/components/ui/card";
-import { SteamProfile, SteamGame } from "./auth/steam/route";
-import { createClient } from "play/utils/supabase/server";
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { SteamGame, SteamProfile } from "./auth/steam/route";
 
 export const SteamProfilePage = async () => {
   const supabase = createClient();

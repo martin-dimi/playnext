@@ -1,17 +1,17 @@
 "use server";
 
+import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "play/utils/supabase/server";
 import {
   type AuthTokensResponse,
   exchangeCodeForAccessToken,
   exchangeNpssoForCode,
-  getUserTitles,
   getProfileFromAccountId,
-  TrophyTitle,
+  getUserTitles,
   getUserTrophyProfileSummary,
+  TrophyTitle,
 } from "psn-api";
 
 export async function loginWithPsn() {

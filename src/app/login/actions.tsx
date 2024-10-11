@@ -1,10 +1,10 @@
 "use server";
 
+import { env } from "@/env";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { env } from "play/env";
 
-import { createClient } from "play/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function loginWithEmail(formData: FormData) {
   const supabase = createClient();

@@ -1,11 +1,11 @@
-import { Button } from "play/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardFooter,
-} from "play/components/ui/card";
+} from "@/components/ui/card";
 import Link from "next/link";
 import { LoginCard } from "./loginCard";
 
