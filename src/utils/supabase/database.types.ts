@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      games: {
+        Row: {
+          coverUrl: string
+          createdAt: string
+          description: string
+          id: number
+          name: string
+          platforms: string[]
+          updatedAt: string
+        }
+        Insert: {
+          coverUrl: string
+          createdAt?: string
+          description: string
+          id?: number
+          name: string
+          platforms: string[]
+          updatedAt?: string
+        }
+        Update: {
+          coverUrl?: string
+          createdAt?: string
+          description?: string
+          id?: number
+          name?: string
+          platforms?: string[]
+          updatedAt?: string
+        }
+        Relationships: []
+      }
       psn_games: {
         Row: {
           definedtrophies: Json | null
@@ -142,15 +172,7 @@ export type Database = {
           rtime_last_played?: number | null
           userid?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "steam_games_userid_fkey"
-            columns: ["userid"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       steam_profiles: {
         Row: {
@@ -189,12 +211,45 @@ export type Database = {
           steamid?: string
           userid?: string | null
         }
+        Relationships: []
+      }
+      user_games: {
+        Row: {
+          createdAt: string
+          gameId: number
+          lastPlayed: string | null
+          platform: string
+          playTime: number | null
+          status: string
+          updatedAt: string
+          userId: string
+        }
+        Insert: {
+          createdAt?: string
+          gameId?: number
+          lastPlayed?: string | null
+          platform: string
+          playTime?: number | null
+          status: string
+          updatedAt?: string
+          userId?: string
+        }
+        Update: {
+          createdAt?: string
+          gameId?: number
+          lastPlayed?: string | null
+          platform?: string
+          playTime?: number | null
+          status?: string
+          updatedAt?: string
+          userId?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "steam_profiles_userid_fkey"
-            columns: ["userid"]
+            foreignKeyName: "user_games_gameId_fkey"
+            columns: ["gameId"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "games"
             referencedColumns: ["id"]
           },
         ]
@@ -295,4 +350,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

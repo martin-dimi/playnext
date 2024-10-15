@@ -17,7 +17,6 @@ export const PsnProfilePage = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) {
     redirect("/error");
   }
@@ -56,6 +55,7 @@ export const PsnProfilePage = async () => {
     .eq("user_id", user?.id);
 
   const profile = res.data as PsnProfile;
+
   const games = gameRes.data as PsnGame[];
 
   return (

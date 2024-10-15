@@ -1,6 +1,13 @@
 import { env } from "@/env";
-import type { SteamGame } from "@type/steam";
 import type { SupabaseClient } from "@type/supabase";
+
+interface SteamGame {
+  appid: number;
+  name: string;
+  img_icon_url?: string;
+  playtime_forever?: number;
+  rtime_last_played?: number;
+}
 
 export const syncGames = async (
   supabase: SupabaseClient,
@@ -21,15 +28,6 @@ export const syncGames = async (
     throw new Error("Steam game response is garbled: " + JSON.stringify(data));
   }
 
-  const games: SteamGame[] = data.response.games.map((g) => ({
-    appid: g.appid,
-    name: g.name,
-    img_icon_url: g.img_icon_url,
-    playtime_forever: g.playtime_forever,
-    rtime_last_played: g.rtime_last_played,
-    userid: g.userid,
-  }));
-
   if (games.length === 0) {
     console.log("No steam games found");
     return [];
@@ -38,3 +36,8 @@ export const syncGames = async (
   const inserted = await supabase.from("steam_games").upsert(games).select();
   return inserted.data ?? [];
 };
+
+export const getGamesFromSteam = async (
+  supabase: SupabaseClient,
+  steamId: string,
+): Promise<SteamGame[]> => {};
