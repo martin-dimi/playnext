@@ -29,7 +29,13 @@ const config = {
         argsIgnorePattern: "^_",
       },
     ],
+    "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/consistent-indexed-object-style": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-misused-promises": [
       "error",
       {

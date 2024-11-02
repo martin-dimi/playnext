@@ -17,6 +17,9 @@ export type Database = {
           id: number
           name: string
           platforms: string[]
+          psnId: string[] | null
+          rating: number
+          steamId: string[] | null
           updatedAt: string
         }
         Insert: {
@@ -26,6 +29,9 @@ export type Database = {
           id?: number
           name: string
           platforms: string[]
+          psnId?: string[] | null
+          rating?: number
+          steamId?: string[] | null
           updatedAt?: string
         }
         Update: {
@@ -35,49 +41,70 @@ export type Database = {
           id?: number
           name?: string
           platforms?: string[]
+          psnId?: string[] | null
+          rating?: number
+          steamId?: string[] | null
           updatedAt?: string
         }
         Relationships: []
       }
-      psn_games: {
+      playlists: {
         Row: {
-          definedtrophies: Json | null
-          earledtrophies: Json | null
-          hiddenFlag: boolean | null
-          iconUrl: string | null
-          id: string
-          lastUpdatedDateTime: string | null
-          name: string | null
-          platform: string | null
-          progress: number | null
-          trophyTitleDetail: string | null
-          user_id: string | null
+          createdAt: string
+          id: number
+          name: string
+          userId: string | null
         }
         Insert: {
-          definedtrophies?: Json | null
-          earledtrophies?: Json | null
-          hiddenFlag?: boolean | null
-          iconUrl?: string | null
-          id: string
-          lastUpdatedDateTime?: string | null
-          name?: string | null
-          platform?: string | null
-          progress?: number | null
-          trophyTitleDetail?: string | null
-          user_id?: string | null
+          createdAt?: string
+          id?: number
+          name: string
+          userId?: string | null
         }
         Update: {
-          definedtrophies?: Json | null
-          earledtrophies?: Json | null
-          hiddenFlag?: boolean | null
-          iconUrl?: string | null
+          createdAt?: string
+          id?: number
+          name?: string
+          userId?: string | null
+        }
+        Relationships: []
+      }
+      profiles_steam: {
+        Row: {
+          avatar: string
+          createdAt: string
+          id: string
+          personastate: number
+          profilestate: number
+          profileUrl: string
+          realname: string | null
+          syncedAt: string
+          userId: string
+          username: string
+        }
+        Insert: {
+          avatar: string
+          createdAt?: string
+          id: string
+          personastate: number
+          profilestate: number
+          profileUrl: string
+          realname?: string | null
+          syncedAt?: string
+          userId?: string
+          username: string
+        }
+        Update: {
+          avatar?: string
+          createdAt?: string
           id?: string
-          lastUpdatedDateTime?: string | null
-          name?: string | null
-          platform?: string | null
-          progress?: number | null
-          trophyTitleDetail?: string | null
-          user_id?: string | null
+          personastate?: number
+          profilestate?: number
+          profileUrl?: string
+          realname?: string | null
+          syncedAt?: string
+          userId?: string
+          username?: string
         }
         Relationships: []
       }
@@ -111,111 +138,10 @@ export type Database = {
         }
         Relationships: []
       }
-      psn_tokens: {
-        Row: {
-          accessToken: string
-          expiresIn: number | null
-          idToken: string | null
-          npsso: string | null
-          refreshToken: string | null
-          refreshTokenExpiresIn: number | null
-          scope: string | null
-          tokenType: string | null
-          userid: string
-        }
-        Insert: {
-          accessToken: string
-          expiresIn?: number | null
-          idToken?: string | null
-          npsso?: string | null
-          refreshToken?: string | null
-          refreshTokenExpiresIn?: number | null
-          scope?: string | null
-          tokenType?: string | null
-          userid?: string
-        }
-        Update: {
-          accessToken?: string
-          expiresIn?: number | null
-          idToken?: string | null
-          npsso?: string | null
-          refreshToken?: string | null
-          refreshTokenExpiresIn?: number | null
-          scope?: string | null
-          tokenType?: string | null
-          userid?: string
-        }
-        Relationships: []
-      }
-      steam_games: {
-        Row: {
-          appid: number
-          img_icon_url: string | null
-          name: string
-          playtime_forever: number | null
-          rtime_last_played: number | null
-          userid: string | null
-        }
-        Insert: {
-          appid: number
-          img_icon_url?: string | null
-          name: string
-          playtime_forever?: number | null
-          rtime_last_played?: number | null
-          userid?: string | null
-        }
-        Update: {
-          appid?: number
-          img_icon_url?: string | null
-          name?: string
-          playtime_forever?: number | null
-          rtime_last_played?: number | null
-          userid?: string | null
-        }
-        Relationships: []
-      }
-      steam_profiles: {
-        Row: {
-          avatar: string | null
-          communityvisibilitystate: number
-          lastlogoff: number | null
-          personaname: string | null
-          personastate: number | null
-          profilestate: number | null
-          profileurl: string | null
-          realname: string | null
-          steamid: string
-          userid: string | null
-        }
-        Insert: {
-          avatar?: string | null
-          communityvisibilitystate: number
-          lastlogoff?: number | null
-          personaname?: string | null
-          personastate?: number | null
-          profilestate?: number | null
-          profileurl?: string | null
-          realname?: string | null
-          steamid: string
-          userid?: string | null
-        }
-        Update: {
-          avatar?: string | null
-          communityvisibilitystate?: number
-          lastlogoff?: number | null
-          personaname?: string | null
-          personastate?: number | null
-          profilestate?: number | null
-          profileurl?: string | null
-          realname?: string | null
-          steamid?: string
-          userid?: string | null
-        }
-        Relationships: []
-      }
       user_games: {
         Row: {
           createdAt: string
+          externalId: string
           gameId: number
           lastPlayed: string | null
           platform: string
@@ -226,6 +152,7 @@ export type Database = {
         }
         Insert: {
           createdAt?: string
+          externalId: string
           gameId?: number
           lastPlayed?: string | null
           platform: string
@@ -236,6 +163,7 @@ export type Database = {
         }
         Update: {
           createdAt?: string
+          externalId?: string
           gameId?: number
           lastPlayed?: string | null
           platform?: string

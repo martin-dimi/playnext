@@ -10,7 +10,7 @@ import { env } from "@/env";
 import openid, { type OpenIdError } from "openid";
 
 const relyingParty = new openid.RelyingParty(
-  env.NEXT_PUBLIC_DOMAIN + "/auth/steam",
+  env.NEXT_PUBLIC_DOMAIN + "/api/auth/steam",
   env.NEXT_PUBLIC_DOMAIN,
   true,
   false,

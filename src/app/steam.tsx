@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SteamGame, SteamProfile } from "@/types/steam";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { SteamGame, SteamProfile } from "./auth/steam/route";
 
 export const SteamProfilePage = async () => {
   const supabase = createClient();
@@ -61,7 +61,7 @@ export const SteamProfilePage = async () => {
       <div className="px-4 lg:px-0">
         <Card className="flex justify-start gap-4 px-4 py-4 dark:bg-neutral-800">
           <img
-            src={profile.avatar}
+            src={profile.avatar || ""}
             alt="avatar"
             className="h-20 w-20 rounded-lg"
           />
@@ -82,6 +82,7 @@ export const SteamProfilePage = async () => {
       <div className="flex flex-col gap-4 px-4 lg:px-0">
         {games
           // sort usign playtime
+          // @ts-ignore
           .sort((a, b) => b.playtime_forever - a.playtime_forever)
           .map((game) => (
             <Game key={game.appid} game={game} />
@@ -92,7 +93,7 @@ export const SteamProfilePage = async () => {
 };
 
 const Game = ({ game }: { game: SteamGame }) => {
-  const timePlayedReadable = readableTime(game.playtime_forever);
+  const timePlayedReadable = readableTime(game.playtime_forever ?? 0);
 
   return (
     <Card>
@@ -111,10 +112,11 @@ const Game = ({ game }: { game: SteamGame }) => {
           <strong>App id</strong>: {game.appid}
         </h1>
         <h1>
-          <strong>Playtime</strong>: {readableTime(game.playtime_forever)}
+          <strong>Playtime</strong>: {readableTime(game.playtime_forever || 0)}
         </h1>
         <h1>
-          <strong>Last played</strong>: {reableUnixTime(game.rtime_last_played)}
+          <strong>Last played</strong>:{" "}
+          {reableUnixTime(game.rtime_last_played || 0)}
         </h1>
       </CardContent>
     </Card>

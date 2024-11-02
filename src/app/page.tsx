@@ -1,15 +1,10 @@
-import { SteamProfilePage } from "./steam";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PsnProfilePage } from "./psn";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { SteamProfilePage } from "./steam";
 
 export default async function Home() {
   return (
-    <main className="dark flex min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 text-white">
       <Tabs defaultValue="steam" className="w-[400px]">
         <TabsList>
           <TabsTrigger value="steam">Steam</TabsTrigger>

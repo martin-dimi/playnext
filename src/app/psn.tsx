@@ -56,6 +56,7 @@ export const PsnProfilePage = async () => {
 
   const profile = res.data as PsnProfile;
 
+  // @ts-ignore
   const games = gameRes.data as PsnGame[];
 
   return (

@@ -4,25 +4,38 @@ import { Tables } from "@/utils/supabase/database.types";
 export interface Game {
   id: number;
   name: string;
+  description: string;
+  rating: number;
   coverUrl: string;
   platforms: Platform[];
+  psnIds: string[] | null;
+  steamIds: string[] | null;
+
+  userGames?: UserGame[];
 
   createdAt: string;
   updatedAt: string;
 }
 
 // User specific game interface
-export interface UserGame extends Game {
+export interface UserGame {
   gameId: number;
   userId: string;
+  externalId: string;
   platform: Platform;
   status: PlayStatus;
-  playTime?: number; // in seconds
-  lastPlayed?: string; // unix timestamp
+  playTime: number | null; // in seconds
+  lastPlayed: string | null; // unix timestamp
 }
 
-export type Platform = "steam" | "psn" | "epic_games";
-export type PlayStatus = "not_played" | "played" | "done" | "beaten";
+export type Platform =
+  | "steam"
+  | "gog"
+  | "psn"
+  | "epic_games"
+  | "xbox"
+  | "unknown";
+export type PlayStatus = "not_played" | "played" | "done";
 
 export type DbGame = Tables<"games">;
 export type DbUserGame = Tables<"user_games">;
@@ -31,26 +44,27 @@ export const ToGame = (dbGame: DbGame): Game => {
   return {
     id: dbGame.id,
     name: dbGame.name,
+    description: dbGame.description,
+    rating: dbGame.rating,
     coverUrl: dbGame.coverUrl,
+
     platforms: dbGame.platforms as Platform[],
+    steamIds: dbGame.steamId,
+    psnIds: dbGame.psnId,
+
     createdAt: dbGame.createdAt,
     updatedAt: dbGame.updatedAt,
   };
 };
 
-export const ToUserGame = (
-  dbUserGame: DbUserGame,
-  dbGame: DbGame,
-): UserGame => {
-  const game = ToGame(dbGame);
-
+export const ToUserGame = (dbGame: DbUserGame): UserGame => {
   return {
-    ...game,
-    gameId: dbUserGame.gameId,
-    userId: dbUserGame.userId,
-    platform: dbUserGame.platform as Platform,
-    status: dbUserGame.status as PlayStatus,
-    playTime: dbUserGame.playTime ?? undefined,
-    lastPlayed: dbUserGame.lastPlayed ?? undefined,
+    gameId: dbGame.gameId,
+    userId: dbGame.userId,
+    externalId: dbGame.externalId,
+    platform: dbGame.platform as Platform,
+    status: dbGame.status as PlayStatus,
+    playTime: dbGame.playTime,
+    lastPlayed: dbGame.lastPlayed,
   };
 };

@@ -9,6 +9,7 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
     TWITCH_CLIENT_ID: z.string(),
+    TWITCH_CLIENT_SECRET: z.string(),
     TWITCH_ACCESS_TOKEN: z.string(),
   },
 
@@ -38,6 +39,7 @@ export const env = createEnv({
       : process.env.NEXT_PUBLIC_DOMAIN,
 
     TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
+    TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
     TWITCH_ACCESS_TOKEN: process.env.TWITCH_ACCESS_TOKEN,
   },
   /**

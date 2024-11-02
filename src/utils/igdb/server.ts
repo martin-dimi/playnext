@@ -4,7 +4,7 @@ import igdb from "igdb-api-node";
 // Infer the client type from the return type of the igdb function
 export type ImdbClient = ReturnType<typeof igdb>;
 
-var client: ImdbClient | null = null;
+let client: ImdbClient | null = null;
 
 export function createClient(): ImdbClient {
   if (!client) {
