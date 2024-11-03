@@ -1,23 +1,56 @@
+import GamesBoard from "@/components/games/gamesBoard";
 import { Game, ToGame, ToUserGame } from "@/types/game";
 import { createClient } from "@/utils/supabase/server";
 import { groupBy, map } from "lodash";
 import { redirect } from "next/navigation";
-import Home from "../trending/home";
+import EmptyGameList from "./emptyList";
 
-export default async function Trending({
+export default async function GamesPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ playlist: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const { game: gameId } = await searchParams;
-  const games = await getOwnedGames();
+  const { playlist } = await params;
+  const { g: preselectedGameId } = await searchParams;
+
+  const games = await getPlaylistGames(playlist);
+  const enableReorder = playlist !== "trending";
+
+  const preselectedGame = preselectedGameId
+    ? games.find((g) => g.id === +preselectedGameId)
+    : null;
 
   return (
     <section className="w-full flex gap-5 justify-start relative overflow-hidden">
-      <Home games={games} />
+      {games.length === 0 ? (
+        <EmptyGameList playlist={playlist} />
+      ) : (
+        <GamesBoard
+          games={games}
+          preselectedGame={preselectedGame ?? null}
+          enableReorder={enableReorder}
+        />
+      )}
     </section>
   );
 }
+
+const getPlaylistGames = async (playlist: string): Promise<Game[]> => {
+  if (playlist === "trending") {
+    return getTrengingGames();
+  }
+  if (playlist === "all") {
+    return getOwnedGames();
+  }
+  if (playlist === "steam") {
+    return getOwnedGames();
+  }
+
+  // TODO: add custom playlists..
+  return [];
+};
 
 const getOwnedGames = async (): Promise<Game[]> => {
   const supabase = createClient();
@@ -52,4 +85,19 @@ const getOwnedGames = async (): Promise<Game[]> => {
   })).sort((a, b) => b.userGames[0]?.playTime!! - a.userGames[0]?.playTime!!);
 
   return games;
+};
+
+const getTrengingGames = async (): Promise<Game[]> => {
+  const supabaseClient = createClient();
+
+  const res = await supabaseClient
+    .from("games")
+    .select()
+    .order("rating", { ascending: true })
+    .limit(50);
+  if (res.error != null) {
+    throw new Error("Failed to fetch games: " + res.error.message);
+  }
+
+  return res.data.map(ToGame);
 };

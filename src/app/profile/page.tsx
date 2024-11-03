@@ -1,6 +1,7 @@
 import { LogoutButton } from "@/components/logoutButton";
 import { NavBar } from "@/components/navbar";
 import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
 import PsnCard from "./psn";
 import SteamCard from "./steam";
 
@@ -24,8 +25,15 @@ export default async function Profile() {
   }
 
   return (
-    <main className="flex flex-col w-full h-screen">
+    <main className="relative flex flex-col w-full h-screen">
       <NavBar current="profile" />
+      <Link
+        href="/games/steam"
+        className="absolute left-[20px] text-xl text-center mt-10"
+      >
+        <h1>Go Back to games lol</h1>
+      </Link>
+
       <section className="grow flex flex-col leading-0 items-center gap-5">
         <div className="flex gap-1.5">
           <h1 className="leading-0 text-white/60">Logged in as</h1>

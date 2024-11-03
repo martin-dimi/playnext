@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { syncGames } from "@/server/steam/games";
+import { syncSteamGames } from "@/server/steam/games";
 import { syncProfile } from "@/server/steam/profile";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   try {
     const steamId = await resolveSteamId(request);
     await syncProfile(supabase, user.id, steamId);
-    await syncGames(steamId);
+    await syncSteamGames(steamId);
   } catch (error) {
     console.error(error);
     redirect("/error");

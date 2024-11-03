@@ -1,4 +1,4 @@
-import { Game, Platform } from "@/types/game";
+import type { Game, Platform } from "@/types/game";
 import { getImageId } from "@/utils/games";
 import { cn } from "@/utils/utils";
 import { uniq } from "lodash";
@@ -36,7 +36,7 @@ export default function GameCard({ game, className, rank }: GameCardProps) {
           width="360"
           height="540"
           loading="lazy"
-          src={`https://images.igdb.com/igdb/image/upload/t_720p_2x/${imageId}`}
+          src={`https://images.igdb.com/igdb/image/upload/t_720p/${imageId}`}
           alt={game.name}
           className="w-full h-full object-cover"
         />
