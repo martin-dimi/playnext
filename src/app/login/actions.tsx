@@ -15,7 +15,7 @@ export async function loginWithEmail(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: "http://localhost:3000",
+      emailRedirectTo: env.NEXT_PUBLIC_DOMAIN,
       shouldCreateUser: true,
     },
   });
