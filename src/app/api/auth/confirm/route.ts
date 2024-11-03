@@ -5,11 +5,13 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export async function GET(request: NextRequest) {
+  console.log("HEHEHEHHEHEH");
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+  const next = searchParams.get("next") ?? "/games/trending";
 
+  console.log("Verifying OTP", type, token_hash);
   if (token_hash && type) {
     const supabase = createClient();
 

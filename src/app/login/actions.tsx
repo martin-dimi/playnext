@@ -10,11 +10,12 @@ export async function loginWithEmail(formData: FormData) {
   const supabase = createClient();
   const email = formData.get("email") as string;
 
-  console.log("Login in with", email);
+  console.log("Logging in with email", env.NEXT_PUBLIC_DOMAIN);
+
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: env.NEXT_PUBLIC_DOMAIN + "/",
+      emailRedirectTo: "http://localhost:3000",
       shouldCreateUser: true,
     },
   });
@@ -24,7 +25,6 @@ export async function loginWithEmail(formData: FormData) {
     redirect("/error");
   }
 
-  console.log("Success. User logged in");
   revalidatePath("/login", "layout");
   redirect("/login?type=check-email");
 }

@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardDescription,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
 import { LoginCard } from "./loginCard";
@@ -17,7 +17,7 @@ export default async function Login({
   const type = searchParams?.type;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main className="flex flex-col w-screen h-screen overflow-hidden justify-center items-center">
       {type === "check-email" ? <CheckEmail /> : <LoginCard />}
     </main>
   );
