@@ -49,10 +49,6 @@ function ReorderableGrid({
   onReorder,
   canReoder,
 }: PropsWithChildren & GridProps) {
-  if (!canReoder) {
-    return <>{children}</>;
-  }
-
   const [activeId, setActiveId] = useState<number | null>(null);
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as number);
@@ -83,6 +79,10 @@ function ReorderableGrid({
     }),
     useSensor(TouchSensor),
   );
+
+  if (!canReoder) {
+    return <>{children}</>;
+  }
 
   return (
     <DndContext

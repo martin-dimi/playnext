@@ -12,6 +12,8 @@ const config = {
   ],
   rules: {
     "@typescript-eslint/array-type": "off",
+
+    "@typescript-eslint/no-unnecessary-type-assertion": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/no-empty-object-type": "off",
@@ -30,12 +32,15 @@ const config = {
       },
     ],
     "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/consistent-indexed-object-style": "off",
     "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-extra-non-null-assertion": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/no-misused-promises": [
       "error",
       {

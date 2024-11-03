@@ -94,7 +94,7 @@ const apiGameToGame = (
 
   console.log("Steam ids", apiGame.external_games);
 
-  let platforms: Platform[] = [];
+  const platforms: Platform[] = [];
   if (steamIds && steamIds.length > 0) {
     platforms.push("steam");
   }
