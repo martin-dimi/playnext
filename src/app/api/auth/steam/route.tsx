@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   try {
     const steamId = await resolveSteamId(request);
     await syncProfile(supabase, user.id, steamId);
-    await syncSteamGames(steamId);
+    await syncSteamGames(steamId, {});
   } catch (error) {
     console.error(error);
     redirect("/error");

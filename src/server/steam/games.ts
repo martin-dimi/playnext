@@ -5,14 +5,18 @@ import { Game, UserGame } from "@/types/game";
 import { getGamesFromSteamIds } from "../games/create";
 import { saveUserGames } from "../games/userGames";
 
-export const syncSteamGames = async (steamId: string): Promise<UserGame[]> => {
+export const syncSteamGames = async (
+  steamId: string,
+  options: { userId?: string },
+): Promise<UserGame[]> => {
   const rawGames = await getSteamGames(steamId);
-  const userGames = await convertToUserGames(rawGames);
-  return await saveUserGames(userGames);
+  const userGames = await convertToUserGames(rawGames, options);
+  return await saveUserGames(userGames, options);
 };
 
 const convertToUserGames = async (
   rawGames: RawSteamGameReponse[],
+  options: { userId?: string } = {},
 ): Promise<UserGame[]> => {
   const steamIds = rawGames.map((game) => game.appid.toString());
 
@@ -40,7 +44,7 @@ const convertToUserGames = async (
         return null;
       }
 
-      return {
+      const userGame = {
         gameId: game.id,
         platform: "steam",
         externalId: rawGame.appid.toString(),
@@ -49,7 +53,13 @@ const convertToUserGames = async (
         lastPlayed: rawGame.rtime_last_played
           ? new Date(rawGame.rtime_last_played * 1000).toISOString()
           : undefined,
-      };
+      } as UserGame;
+
+      if (options.userId) {
+        userGame.userId = options.userId;
+      }
+
+      return userGame;
     })
     .filter((game) => game !== null) as UserGame[];
 
