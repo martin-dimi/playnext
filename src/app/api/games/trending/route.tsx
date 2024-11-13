@@ -1,4 +1,4 @@
-import { migrateTrendingGames } from "~/server/games/migrate";
+import { migrateTrendingGames } from "@/server/games/trending";
 
 export async function GET() {
   try {
