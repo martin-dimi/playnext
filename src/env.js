@@ -7,7 +7,10 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    NODE_ENV: z.enum(["development", "test", "production"]),
+    DATABASE_URL: z.string().url(),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
     TWITCH_CLIENT_ID: z.string(),
     TWITCH_CLIENT_SECRET: z.string(),
     TWITCH_ACCESS_TOKEN: z.string(),
@@ -19,10 +22,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_SUPABASE_URL: z.string(),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
     NEXT_PUBLIC_STEAM_API_KEY: z.string(),
-    NEXT_PUBLIC_DOMAIN: z.string(),
   },
 
   /**
@@ -30,14 +30,10 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_STEAM_API_KEY: process.env.NEXT_PUBLIC_STEAM_API_KEY,
-    NEXT_PUBLIC_DOMAIN: process.env.VERCEL_URL
-      ? "https://" + process.env.VERCEL_PROJECT_PRODUCTION_URL
-      : process.env.NEXT_PUBLIC_DOMAIN,
 
+    NEXT_PUBLIC_STEAM_API_KEY: process.env.NEXT_PUBLIC_STEAM_API_KEY,
     TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
     TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
     TWITCH_ACCESS_TOKEN: process.env.TWITCH_ACCESS_TOKEN,

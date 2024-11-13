@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+const Page = () => {
+  return <h1>Page</h1>;
+};
 
-export default async function Home() {
-  redirect("/games/trending");
-}
+export default Page;

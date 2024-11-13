@@ -1,12 +1,23 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+// Create a client
 const queryClient = new QueryClient();
 
-export function Providers({ children }: PropsWithChildren) {
+const Providers = ({ children }: PropsWithChildren) => {
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </ClerkProvider>
   );
-}
+};
+
+export default Providers;

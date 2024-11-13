@@ -31,11 +31,8 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
+      "~/*": [
         "./src/*"
-      ],
-      "@type/*": [
-        "./src/types/*"
       ],
       "@ui/*": [
         "./src/components/ui/*"

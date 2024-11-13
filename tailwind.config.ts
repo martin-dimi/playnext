@@ -2,7 +2,7 @@ import { type Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
-  darkMode: ["selector"],
+  darkMode: ["class"],
   content: ["./src/**/*.tsx"],
   plugins: [tailwindcssAnimate, require("tailwindcss-animate")],
   theme: {

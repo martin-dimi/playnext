@@ -1,22 +1,20 @@
 "use server";
 
-import { DbGame, Platform, ToGame, type Game } from "@/types/game";
-import { createClient, type ImdbClient } from "@/utils/igdb/server";
-import { createClient as createSBClient } from "@/utils/supabase/server";
-import { SupabaseClient } from "@supabase/supabase-js";
+import type { Game } from "~/types/game";
+import { createClient } from "./igdb";
+import { db } from "../db";
+import { games as gamesSchema } from "~/server/db/schema";
+import { sql } from "drizzle-orm";
 
 export const getGamesFromSteamIds = async (
   steamGameIds: string[],
 ): Promise<Game[] | null> => {
   if (steamGameIds.length === 0) {
+    console.log("No steam games to fetch");
     return null;
   }
 
-  const supabaseClient = createSBClient();
-  const imdbClient = createClient();
-
   const games = await fetchIgdbGames(
-    imdbClient,
     `external_games.category=1 & external_games.uid=(${steamGameIds.join(",")})`,
   );
 
@@ -27,7 +25,7 @@ export const getGamesFromSteamIds = async (
     );
   }
 
-  const savedGames = await saveGames(supabaseClient, games);
+  const savedGames = await saveGames(games);
   console.log(`Saved ${savedGames.length} games to Supabase`);
 
   return savedGames;
@@ -42,16 +40,14 @@ interface ApiGame {
   external_games?: { url: string; category: number; uid: string }[];
 }
 
-export const fetchIgdbGames = async (
-  imdbClient: ImdbClient,
-  where: string,
-): Promise<Game[]> => {
+export const fetchIgdbGames = async (where: string): Promise<Game[]> => {
+  const imdbClient = createClient();
   const pageSize = 500;
   let offset = 0;
-  let allGames: Game[] = [];
+  let allGames: Omit<Game, "createdAt" | "updatedAt">[] = [];
 
   while (true) {
-    const response = await imdbClient
+    const response = (await imdbClient
       .fields([
         "id",
         "name",
@@ -64,9 +60,9 @@ export const fetchIgdbGames = async (
       .where(where)
       .limit(pageSize)
       .offset(offset)
-      .request("/games");
+      .request("/games")) as { data: ApiGame[] };
 
-    const games: Game[] = response.data.map(apiGameToGame);
+    const games = response.data.map(apiGameToGame);
 
     allGames = allGames.concat(games);
 
@@ -77,7 +73,7 @@ export const fetchIgdbGames = async (
     offset += pageSize;
   }
 
-  return allGames;
+  return allGames as Game[];
 };
 
 const apiGameToGame = (
@@ -85,68 +81,36 @@ const apiGameToGame = (
 ): Omit<Game, "createdAt" | "updatedAt"> => {
   const steamIds =
     apiGame.external_games?.filter((g) => g.category === 1).map((g) => g.uid) ??
-    null;
+    [];
 
   const psnIds =
     apiGame.external_games
       ?.filter((g) => g.category === 36)
-      .map((g) => g.uid) ?? null;
-
-  console.log("Steam ids", apiGame.external_games);
-
-  const platforms: Platform[] = [];
-  if (steamIds && steamIds.length > 0) {
-    platforms.push("steam");
-  }
-  if (psnIds && psnIds.length > 0) {
-    platforms.push("psn");
-  }
+      .map((g) => g.uid) ?? [];
 
   return {
     id: apiGame.id,
     name: apiGame.name,
-    description: apiGame.summary || "",
+    description: apiGame.summary ?? "",
     rating: apiGame.rating,
-    coverUrl: apiGame.cover?.url || "",
+    coverUrl: apiGame.cover?.url ?? "",
 
-    platforms: platforms,
     steamIds: steamIds,
     psnIds: psnIds,
   };
 };
 
-export const saveGames = async (
-  supabaseClient: SupabaseClient,
-  games: Game[],
-): Promise<Game[]> => {
-  const dbGames = games.map(ToDbGame);
+export const saveGames = async (games: Game[]): Promise<Game[]> => {
+  const res = await db
+    .insert(gamesSchema)
+    .values(games)
+    .onConflictDoUpdate({
+      target: gamesSchema.id,
+      set: {
+        rating: sql.raw(`excluded.rating`),
+      },
+    })
+    .returning();
 
-  // Make it so on conflict, do nothing
-  const res = await supabaseClient
-    .from("games")
-    .upsert(dbGames, { defaultToNull: false })
-    .select()
-    .returns<DbGame[]>();
-  if (res.error != null) {
-    throw new Error("Failed to save games: " + res.error.message);
-  }
-
-  return res.data.map(ToGame);
-};
-
-const ToDbGame = (game: Game): DbGame => {
-  return {
-    id: game.id,
-    name: game.name,
-    description: game.description,
-    rating: game.rating,
-    coverUrl: game.coverUrl,
-
-    platforms: game.platforms,
-    steamId: game.steamIds,
-    psnId: game.psnIds,
-
-    createdAt: game.createdAt,
-    updatedAt: game.updatedAt,
-  };
+  return Array.from(res.values());
 };

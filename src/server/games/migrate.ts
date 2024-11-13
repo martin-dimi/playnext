@@ -1,12 +1,11 @@
 "use server";
 
-import { type Game } from "@/types/game";
-import { createClient, type ImdbClient } from "@/utils/igdb/server";
-import { createClient as createSBClient } from "@/utils/supabase/server";
+import { createClient, type ImdbClient } from "./igdb";
 import { fetchIgdbGames, saveGames } from "./create";
+import type { Game } from "~/types/game";
 
-export const migratePopularGames = async (): Promise<Game[]> => {
-  const supabaseClient = createSBClient();
+export const migrateTrendingGames = async (): Promise<Game[]> => {
+  console.log("Migrating trending games");
   const imdbClient = createClient();
 
   const limit = 500;
@@ -21,12 +20,10 @@ export const migratePopularGames = async (): Promise<Game[]> => {
       "Failed to fetch played games: " + (error as Error).message,
     );
   }
+  console.log(`Fetched ${topGamesIds.length} top played games`);
 
   try {
-    const games = await fetchIgdbGames(
-      imdbClient,
-      `id = (${topGamesIds.join(",")})`,
-    );
+    const games = await fetchIgdbGames(`id = (${topGamesIds.join(",")})`);
 
     const gameIdToGame = games.reduce(
       (acc, game) => {
@@ -44,11 +41,19 @@ export const migratePopularGames = async (): Promise<Game[]> => {
     throw new Error("Failed to fetch games: " + (error as Error).message);
   }
 
+  console.log(`Fetched ${topGames.length} games`);
+
   if (topGames.length <= 0) {
     return [];
   }
 
-  return saveGames(supabaseClient, topGames);
+  try {
+    return saveGames(topGames);
+  } catch (error) {
+    throw new Error("Failed to save games: " + (error as Error).message);
+  } finally {
+    console.log("Finished migrating trending games");
+  }
 };
 
 const fetchTopPlayedGamesToday = async (
@@ -62,5 +67,7 @@ const fetchTopPlayedGamesToday = async (
     .limit(number)
     .request("/popularity_primitives");
 
-  return response?.data.map((game: { game_id: number }) => game.game_id);
+  return response?.data.map(
+    (game: { game_id: number }) => game.game_id,
+  ) as number[];
 };
