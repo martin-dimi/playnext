@@ -19,7 +19,7 @@ import { CSS } from "@dnd-kit/utilities";
 import * as motion from "motion/react-client";
 import { useOptimisticAction } from "next-safe-action/hooks";
 import { useRouter } from "next/navigation";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { cn } from "~/lib/utils";
 import { updatePlaylistGamesAction } from "~/server/actions/gameActions";
 import { Game } from "~/types/game";
@@ -53,6 +53,14 @@ export default function GamesGrid(props: {
       };
     },
   });
+
+  // every 1s revalidate /games path
+  useEffect(() => {
+    const interval = setInterval(() => {
+      router.refresh();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleGameClick = (game: Game) => {
     router.push("?g=" + game.id);
