@@ -1,3 +1,6 @@
+"use client";
+
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -14,6 +17,8 @@ import { deletePlaylistAction } from "~/server/actions/gameActions";
 import type { Playlist } from "~/types/game";
 
 export function ModalPlaylistDelete({ playlist }: { playlist: Playlist }) {
+  const queryClient = useQueryClient();
+
   return (
     <Dialog>
       <DialogTrigger className="font-chakra flex items-center justify-start gap-2 text-[14px] font-bold">
@@ -38,9 +43,10 @@ export function ModalPlaylistDelete({ playlist }: { playlist: Playlist }) {
           <DialogClose asChild>
             <Button
               className="bg-gold"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
                 deletePlaylistAction({ playlistId: playlist.id });
+                queryClient.invalidateQueries({ queryKey: ["playlists"] });
               }}
             >
               Yes

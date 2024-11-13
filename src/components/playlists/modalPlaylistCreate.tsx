@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@ui/button";
 import {
   Dialog,
@@ -14,10 +15,11 @@ import {
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Plus } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPlaylistAction } from "~/server/actions/gameActions";
 
 export function ModalPlaylistCreate() {
+  const queryClient = useQueryClient();
   const [name, setName] = useState<string>("");
   const createButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -66,7 +68,10 @@ export function ModalPlaylistCreate() {
           <DialogClose asChild>
             <Button
               ref={createButtonRef}
-              onClick={() => createPlaylistAction({ name: name })}
+              onClick={async () => {
+                await createPlaylistAction({ name: name });
+                queryClient.invalidateQueries({ queryKey: ["playlists"] });
+              }}
               disabled={!name}
             >
               Create

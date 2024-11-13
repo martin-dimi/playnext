@@ -1,7 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { authActionClient } from "./safeActions";
 import {
   addGameToPlaylist,
   createUserPlaylist,
@@ -9,20 +9,20 @@ import {
   removeGameFromPlaylist,
   updatePlaylistGames,
 } from "./games";
-import { revalidatePath } from "next/cache";
+import { authActionClient } from "./safeActions";
 
 export const createPlaylistAction = authActionClient
   .schema(z.object({ name: z.string() }))
   .action(async ({ parsedInput: { name }, ctx }) => {
+    await createUserPlaylist(ctx.userId, name);
     revalidatePath("/games");
-    return createUserPlaylist(ctx.userId, name);
   });
 
 export const deletePlaylistAction = authActionClient
   .schema(z.object({ playlistId: z.number() }))
   .action(async ({ parsedInput: { playlistId }, ctx }) => {
+    await deleteUserPlaylist(ctx.userId, playlistId);
     revalidatePath("/games");
-    return deleteUserPlaylist(ctx.userId, playlistId);
   });
 
 export const addGameToPlaylistAction = authActionClient

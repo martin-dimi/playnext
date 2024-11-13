@@ -1,8 +1,8 @@
 "use server";
 
-import { createClient, type ImdbClient } from "./igdb";
-import { fetchIgdbGames, saveGames } from "./create";
 import type { Game } from "~/types/game";
+import { fetchIgdbGames, saveGames } from "./create";
+import { createClient, type ImdbClient } from "./igdb";
 
 export const migrateTrendingGames = async (): Promise<Game[]> => {
   console.log("Migrating trending games");

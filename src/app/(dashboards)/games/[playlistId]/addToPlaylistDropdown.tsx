@@ -5,7 +5,6 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
@@ -23,56 +22,76 @@ import { Game } from "~/types/game";
 export default function AddToPlaylistDropdown({
   children,
   game,
-}: PropsWithChildren & { game: Game }) {
+  currentPlaylistId,
+}: PropsWithChildren & { game: Game; currentPlaylistId: number }) {
   const { data: playlists } = useQuery({
     queryKey: ["playlists"],
     queryFn: () => getUserPlaylists(),
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
   });
+
+  const currentPlaylist = playlists?.find(
+    (playlist) => playlist.id === currentPlaylistId,
+  );
 
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
       <ContextMenuContent className="z-[1000]">
+        {currentPlaylist && (
+          <ContextMenuItem
+            onClick={async (e) => {
+              e.stopPropagation();
+              await removeGameFromPlaylistAction({
+                playlistId: currentPlaylist.id,
+                gameId: game.id,
+              });
+            }}
+            className="flex items-center gap-1"
+          >
+            Remove from <em className="text-gold">{currentPlaylist.name}</em>
+          </ContextMenuItem>
+        )}
+
         <ContextMenuSub>
-          <ContextMenuSubTrigger inset>Add to Playlist</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger>Add to Playlist</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
-            <ContextMenuItem>
-              Favourites
-              <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
-            </ContextMenuItem>
+            {playlists
+              ?.sort((a, b) => a.name.localeCompare(b.name))
+              .map((playlist) => {
+                const isGameInPlaylist =
+                  game.playlistIds?.includes(playlist.id) ?? false;
 
-            {playlists?.map((playlist) => {
-              const isGameInPlaylist =
-                game.playlistIds?.includes(playlist.id) ?? false;
+                return (
+                  <ContextMenuItem
+                    key={playlist.id}
+                    onClick={async (e) => {
+                      e.stopPropagation();
 
-              return (
-                <ContextMenuItem
-                  key={playlist.id}
-                  onClick={async (e) => {
-                    e.stopPropagation();
+                      if (isGameInPlaylist) {
+                        await removeGameFromPlaylistAction({
+                          playlistId: playlist.id,
+                          gameId: game.id,
+                        });
+                        return;
+                      }
 
-                    if (isGameInPlaylist) {
-                      await removeGameFromPlaylistAction({
+                      await addGameToPlaylistAction({
                         playlistId: playlist.id,
                         gameId: game.id,
                       });
-                      return;
-                    }
-
-                    await addGameToPlaylistAction({
-                      playlistId: playlist.id,
-                      gameId: game.id,
-                    });
-                  }}
-                >
-                  {isGameInPlaylist && <Check />}
-                  {playlist.name}
-                </ContextMenuItem>
-              );
-            })}
+                    }}
+                    className="flex items-center gap-1"
+                  >
+                    {isGameInPlaylist && (
+                      <Check size={14} className="text-gold" />
+                    )}
+                    {playlist.name}{" "}
+                    {playlist.id === currentPlaylistId && (
+                      <span className="text-xs text-muted">(current)</span>
+                    )}
+                  </ContextMenuItem>
+                );
+              })}
           </ContextMenuSubContent>
         </ContextMenuSub>
       </ContextMenuContent>

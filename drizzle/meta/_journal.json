@@ -43,6 +43,48 @@
       "when": 1731274699304,
       "tag": "0005_lumpy_warpath",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1731506238926,
+      "tag": "0006_abnormal_stryfe",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1731507401840,
+      "tag": "0007_parched_ben_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1731507560984,
+      "tag": "0008_clean_imperial_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1731507630102,
+      "tag": "0009_flippant_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1731507753579,
+      "tag": "0010_cool_silver_centurion",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1731509686347,
+      "tag": "0011_mute_magneto",
+      "breakpoints": true
     }
   ]
 }

@@ -1,15 +1,51 @@
 "use server";
 
-import { Game, Playlist } from "~/types/game";
-import { db } from "../db";
-import { and, eq, max, sql } from "drizzle-orm";
-
+import { auth } from "@clerk/nextjs/server";
+import { and, desc, eq, isNotNull, max, sql } from "drizzle-orm";
 import {
   games as gamesSchema,
   playlistGames as playlistGamesSchema,
   playlists as playlistsSchema,
+  userGames as userGamesSchema,
 } from "~/server/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { Game, Playlist } from "~/types/game";
+import { db } from "../db";
+
+const playlistIdsType = sql<
+  number[]
+>`array_agg(${playlistGamesSchema.playlistId}) as playlist_ids`;
+
+export async function getOwnedGames(limit: number): Promise<Game[]> {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("User not found");
+  }
+
+  const res = await db
+    .select({
+      game: gamesSchema,
+      playlistIds: playlistIdsType,
+      playtime: sql`MAX(${userGamesSchema.playtime}) as playtime`,
+    })
+    .from(userGamesSchema)
+    .leftJoin(gamesSchema, eq(userGamesSchema.gameId, gamesSchema.id))
+    .leftJoin(
+      playlistGamesSchema,
+      eq(userGamesSchema.gameId, playlistGamesSchema.gameId),
+    )
+    .where(and(eq(userGamesSchema.userId, userId), isNotNull(gamesSchema.name)))
+    .groupBy(gamesSchema.id)
+    .orderBy(desc(sql`playtime`))
+    .limit(limit);
+
+  const games =
+    res.map((v) => ({
+      ...v.game!,
+      playlistIds: v.playlistIds ?? [],
+    })) ?? [];
+
+  return games;
+}
 
 export async function getTrendingGames(limit: number): Promise<Game[]> {
   const res = await db

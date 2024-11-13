@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   integer,
+  numeric,
   pgTable,
   primaryKey,
   text,
@@ -11,7 +12,7 @@ export const games = pgTable("games", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  rating: integer("rating").notNull(),
+  rating: numeric("rating"),
   coverUrl: text("cover_url").notNull(),
   psnIds: text("psn_ids")
     .array()
@@ -31,11 +32,15 @@ export const games = pgTable("games", {
 });
 
 export const playlists = pgTable("playlists", {
-  id: integer().primaryKey().generatedByDefaultAsIdentity(),
-  name: text().notNull(),
-  userId: text().notNull(),
-  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: text("name").notNull(),
+  userId: text("user_id").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
 });
 
 export const playlistGames = pgTable(
@@ -43,10 +48,10 @@ export const playlistGames = pgTable(
   {
     playlistId: integer("playlist_id")
       .notNull()
-      .references(() => playlists.id),
+      .references(() => playlists.id, { onDelete: "cascade" }),
     gameId: integer("game_id")
       .notNull()
-      .references(() => games.id),
+      .references(() => games.id, { onDelete: "cascade" }),
     rank: integer("rank").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -59,37 +64,47 @@ export const playlistGames = pgTable(
   },
 );
 
-// export const booksToAuthors = pgTable("books_to_authors", {
-//   authorId: integer("author_id"),
-//   bookId: integer("book_id"),
-// }, (table) => {
-//   return {
-//     pk: primaryKey({ columns: [table.bookId, table.authorId] }),
-//     pkWithCustomName: primaryKey({ name: 'custom_name', columns: [table.bookId, table.authorId] }),
-//   };
-// });
-
 export const userGames = pgTable(
   "user_games",
   {
-    userId: text().notNull(),
-    gameId: integer()
+    userId: text("user_id").notNull(),
+    gameId: integer("game_id")
       .notNull()
-      .references(() => games.id),
+      .references(() => games.id, { onDelete: "cascade" }),
 
-    externalId: text().notNull(),
-    lastPlayed: timestamp({ withTimezone: true }),
-    playtime: integer(),
+    externalId: text("external_id").notNull(),
+    lastPlayed: timestamp("last_played", { withTimezone: true }),
+    playtime: integer("playtime"),
 
-    platform: text().notNull(),
-    status: text().notNull(),
+    platform: text("platform").notNull(),
+    status: text("status").notNull(),
 
-    createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
   },
-  (t) => [
-    {
+  (t) => {
+    return {
       pk: primaryKey({ columns: [t.userId, t.gameId] }),
-    },
-  ],
+    };
+  },
 );
+
+export const steamProfiles = pgTable("steam_profiles", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  avatar: text("avatar").notNull(),
+  username: text("username").notNull(),
+  realname: text("realname").notNull(),
+  profileUrl: text("profile_url").notNull(),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  synchedAt: timestamp("synched_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});

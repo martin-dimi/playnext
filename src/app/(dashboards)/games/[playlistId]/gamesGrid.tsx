@@ -16,15 +16,15 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { PropsWithChildren } from "react";
-import GameCard from "./gameCard";
-import { Game } from "~/types/game";
-import { cn } from "~/lib/utils";
-import AddToPlaylistDropdown from "./addToPlaylistDropdown";
-import { updatePlaylistGamesAction } from "~/server/actions/gameActions";
+import * as motion from "motion/react-client";
 import { useOptimisticAction } from "next-safe-action/hooks";
 import { useRouter } from "next/navigation";
-import * as motion from "motion/react-client";
+import { PropsWithChildren } from "react";
+import { cn } from "~/lib/utils";
+import { updatePlaylistGamesAction } from "~/server/actions/gameActions";
+import { Game } from "~/types/game";
+import AddToPlaylistDropdown from "./addToPlaylistDropdown";
+import GameCard from "./gameCard";
 
 export default function GamesGrid(props: {
   playlistId: number;
@@ -85,7 +85,10 @@ export default function GamesGrid(props: {
       >
         {games.map((game, i) => (
           <SortableItem key={game.id} onClick={handleGameClick} game={game}>
-            <AddToPlaylistDropdown game={game}>
+            <AddToPlaylistDropdown
+              game={game}
+              currentPlaylistId={props.playlistId}
+            >
               <GameCard game={game} rank={i} className="h-[300px] w-[200px]" />
             </AddToPlaylistDropdown>
           </SortableItem>

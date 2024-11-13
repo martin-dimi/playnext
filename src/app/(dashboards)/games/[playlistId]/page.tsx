@@ -1,11 +1,15 @@
-import EmptyGameList from "./emptyList";
 import { ScrollArea } from "@ui/scroll-area";
 import * as motion from "motion/react-client";
+import { cn } from "~/lib/utils";
+import {
+  getOwnedGames,
+  getPlaylistGames,
+  getTrendingGames,
+} from "~/server/actions/games";
+import type { Game } from "~/types/game";
+import EmptyGameList from "./emptyList";
 import { GameDetailsCard } from "./gameDetailsCard";
 import GamesGrid from "./gamesGrid";
-import type { Game } from "~/types/game";
-import { cn } from "~/lib/utils";
-import { getPlaylistGames, getTrendingGames } from "~/server/actions/games";
 
 const GamesPage = async ({
   params,
@@ -26,9 +30,7 @@ const GamesPage = async ({
     return <EmptyGameList playlistId={playlistId} />;
   }
 
-  const enableReorder = playlistId !== "trending";
-  console.log("selectedGame", selectedGame);
-
+  const enableReorder = !["trending", "all"].includes(playlistId);
   return (
     <section className="relative flex w-full justify-start gap-5 overflow-hidden">
       <ScrollArea className="h-full w-full">
@@ -77,5 +79,9 @@ const getGamesForPlaylistId = async (playlistId: string): Promise<Game[]> => {
   if (playlistId === "trending") {
     return getTrendingGames(50);
   }
+  if (playlistId === "all") {
+    return getOwnedGames(50);
+  }
+
   return getPlaylistGames(+playlistId);
 };
