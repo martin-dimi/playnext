@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import Sidebar from "./sidebar";
 import TopBar from "./topbar";
 
@@ -6,12 +7,14 @@ const GamesLayout = async ({
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <main className="flex w-full flex-col overflow-hidden">
-      <TopBar />
+      <ClerkProvider dynamic>
+        <TopBar />
 
-      <section className="flex grow gap-4 overflow-hidden">
-        <Sidebar />
-        {children}
-      </section>
+        <section className="flex grow overflow-hidden">
+          <Sidebar />
+          {children}
+        </section>
+      </ClerkProvider>
     </main>
   );
 };

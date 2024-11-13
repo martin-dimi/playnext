@@ -1,3 +1,9 @@
+import { auth } from "@clerk/nextjs/server";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { ScrollArea } from "@ui/scroll-area";
 import * as motion from "motion/react-client";
 import { cn } from "~/lib/utils";
@@ -5,6 +11,7 @@ import {
   getOwnedGames,
   getPlaylistGames,
   getTrendingGames,
+  getUserPlaylists,
 } from "~/server/actions/games";
 import type { Game } from "~/types/game";
 import EmptyGameList from "./emptyList";
@@ -30,46 +37,56 @@ const GamesPage = async ({
     return <EmptyGameList playlistId={playlistId} />;
   }
 
-  const enableReorder = !["trending", "all"].includes(playlistId);
-  return (
-    <section className="relative flex w-full justify-start gap-5 overflow-hidden">
-      <ScrollArea className="h-full w-full">
-        <motion.div
-          className={cn("flex flex-wrap gap-5 py-10", {
-            "w-[100%]": !selectedGame,
-            "w-[50%]": selectedGame,
-          })}
-          layout
-          transition={{ duration: 0.25 }}
-        >
-          <GamesGrid
-            canReoder={enableReorder}
-            games={games}
-            playlistId={+playlistId}
-          />
-        </motion.div>
-      </ScrollArea>
+  const { userId } = await auth();
+  const enableReorder = !!userId && !["trending", "all"].includes(playlistId);
 
-      <motion.div
-        className={cn(
-          "absolute right-0 h-full w-[50%] min-w-[500px] text-lg font-bold",
-          {
-            "pointer-events-none": !selectedGame,
-          },
-        )}
-        initial={{
-          opacity: selectedGame ? 1 : 0,
-          x: selectedGame ? 0 : "30%",
-        }}
-        animate={{
-          opacity: selectedGame ? 1 : 0,
-          x: selectedGame ? 0 : "30%",
-        }}
-        transition={{ duration: 0.25, ease: "easeInOut" }}
-      >
-        <GameDetailsCard game={selectedGame} />
-      </motion.div>
-    </section>
+  const query = new QueryClient();
+  await query.prefetchQuery({
+    queryKey: ["playlists"],
+    queryFn: getUserPlaylists,
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(query)}>
+      <section className="relative flex w-full justify-start gap-5 overflow-hidden">
+        <ScrollArea className="h-full w-full">
+          <motion.div
+            className={cn("flex flex-wrap justify-center gap-5 py-10", {
+              "w-[100%]": !selectedGame,
+              "w-[50%]": selectedGame,
+            })}
+            layout
+            transition={{ duration: 0.25 }}
+          >
+            <GamesGrid
+              canReoder={enableReorder}
+              games={games}
+              playlistId={+playlistId}
+            />
+          </motion.div>
+        </ScrollArea>
+
+        <motion.div
+          className={cn(
+            "absolute right-0 h-full w-[50%] min-w-[500px] text-lg font-bold",
+            {
+              "pointer-events-none": !selectedGame,
+            },
+          )}
+          initial={{
+            opacity: selectedGame ? 1 : 0,
+            x: selectedGame ? 0 : "30%",
+          }}
+          animate={{
+            opacity: selectedGame ? 1 : 0,
+            x: selectedGame ? 0 : "30%",
+          }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+        >
+          <GameDetailsCard game={selectedGame} />
+        </motion.div>
+      </section>
+    </HydrationBoundary>
   );
 };
 

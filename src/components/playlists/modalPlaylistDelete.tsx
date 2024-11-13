@@ -13,16 +13,25 @@ import {
   DialogTrigger,
 } from "@ui/dialog";
 import { Trash } from "lucide-react";
+import { cn } from "~/lib/utils";
 import { deletePlaylistAction } from "~/server/actions/gameActions";
 import type { Playlist } from "~/types/game";
 
-export function ModalPlaylistDelete({ playlist }: { playlist: Playlist }) {
+export function ModalPlaylistDelete({
+  playlist,
+  className,
+}: {
+  playlist: Playlist;
+  className?: string;
+}) {
   const queryClient = useQueryClient();
 
   return (
     <Dialog>
-      <DialogTrigger className="font-chakra flex items-center justify-start gap-2 text-[14px] font-bold">
-        <Trash />
+      <DialogTrigger asChild className={cn(className)}>
+        <Button variant="ghost" className="w-8 h-8" size="icon">
+          <Trash className="text-red-800" size={16} />
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

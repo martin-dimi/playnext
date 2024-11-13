@@ -109,7 +109,7 @@ export async function getPlaylistGames(playlistId: number): Promise<Game[]> {
 export const getUserPlaylists = async (): Promise<Playlist[]> => {
   const { userId } = await auth();
   if (!userId) {
-    throw new Error("User not found");
+    return [];
   }
 
   const ps = await db.query.playlists.findMany({

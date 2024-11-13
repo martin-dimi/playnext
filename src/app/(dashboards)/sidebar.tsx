@@ -1,13 +1,18 @@
+import { auth } from "@clerk/nextjs/server";
 import { type PropsWithChildren } from "react";
-import SidebarItem from "./sidebarItem";
 import { ModalPlaylistCreate } from "~/components/playlists/modalPlaylistCreate";
 import { getUserPlaylists } from "~/server/actions/games";
+import SidebarItem from "./sidebarItem";
 
 export default async function Sidebar() {
-  const playlists = await getUserPlaylists();
+  const { userId } = await auth();
+  if (!userId) {
+    return null;
+  }
 
+  const playlists = await getUserPlaylists();
   return (
-    <nav className="flex w-[200px] flex-col items-start justify-center gap-[30px] p-4">
+    <nav className="flex w-[200px] flex-col items-start justify-center gap-[30px] pl-4">
       <Group title="Explore">
         <SidebarItem name="/games/trending">Trending</SidebarItem>
         <SidebarItem name={"/games/all"}>Owned</SidebarItem>

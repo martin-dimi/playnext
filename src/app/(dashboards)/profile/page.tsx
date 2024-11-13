@@ -1,5 +1,6 @@
 import { SignOutButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import PsnCard from "./psn";
 import SteamCard from "./steam";
 
@@ -7,9 +8,7 @@ export default async function Profile() {
   const user = await currentUser();
 
   if (!user) {
-    return (
-      <h1 className="text-3xl">You need to be logged in to view this page</h1>
-    );
+    redirect("/sign-in");
   }
 
   return (
@@ -30,4 +29,3 @@ export default async function Profile() {
     </section>
   );
 }
-

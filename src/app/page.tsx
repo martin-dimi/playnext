@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
+
 const Page = () => {
-  return <h1>Page</h1>;
+  redirect("/games/trending");
 };
 
 export default Page;

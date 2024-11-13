@@ -17,7 +17,7 @@ export default function SidebarItem({
   return (
     <h2
       className={cn(
-        "font-chakra flex items-center justify-start gap-1 text-[14px] font-bold",
+        "font-chakra flex items-center justify-start gap-1 text-[14px] font-bold group/item",
         {
           "text-[#FFCD00]": pathname === name,
           "text-white": pathname !== name,
@@ -26,7 +26,12 @@ export default function SidebarItem({
     >
       <Link href={name}>{children}</Link>
 
-      {playlist && <ModalPlaylistDelete playlist={playlist} />}
+      {playlist && (
+        <ModalPlaylistDelete
+          playlist={playlist}
+          className="group-hover/item:opacity-100 opacity-0 transition-opacity"
+        />
+      )}
     </h2>
   );
 }

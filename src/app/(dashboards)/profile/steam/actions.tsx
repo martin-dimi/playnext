@@ -47,7 +47,6 @@ export const steamLoginAction = authActionClient.action(async () => {
 export const syncSteamProfile = authActionClient
   .schema(z.object({ steamId: z.string() }))
   .action(async ({ parsedInput, ctx }) => {
-    syncSteamGames(parsedInput.steamId, ctx.userId);
+    syncSteamGames(ctx.userId, parsedInput.steamId);
     revalidatePath("/profile");
   });
-

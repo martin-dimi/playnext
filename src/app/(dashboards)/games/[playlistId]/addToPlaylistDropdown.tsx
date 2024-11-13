@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import {
   ContextMenu,
@@ -27,7 +28,11 @@ export default function AddToPlaylistDropdown({
   const { data: playlists } = useQuery({
     queryKey: ["playlists"],
     queryFn: () => getUserPlaylists(),
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
+  const { userId } = useAuth();
+  if (!userId) return children;
 
   const currentPlaylist = playlists?.find(
     (playlist) => playlist.id === currentPlaylistId,
